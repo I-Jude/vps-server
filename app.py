@@ -33,7 +33,7 @@ def relay():
         chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
 
-        driver = webdriver.Chrome(executable_path="/usr/local/bin/chromedriver", options=chrome_options)
+        driver = webdriver.Chrome(executable_path="/tmp/chrome/chromedriver",options=chrome_options)
         driver.get(target_url)
         time.sleep(3)  # Allow page to load
         content = driver.page_source
