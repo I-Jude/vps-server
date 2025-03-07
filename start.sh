@@ -1,17 +1,23 @@
 #!/bin/bash
 
-# Install dependencies
-apt-get update && apt-get install -y wget unzip curl
+# Install dependencies (without root access)
+mkdir -p /tmp/chrome && cd /tmp/chrome
 
-# Install Chrome
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-dpkg -i google-chrome-stable_current_amd64.deb || apt-get -fy install
+# Download Chrome (prebuilt)
+wget -O chrome-linux.zip "https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_123.0.6312.105-1_amd64.deb"
+ar x chrome-linux.zip
+tar -xvf data.tar.xz
+mv opt/google/chrome /tmp/chrome
+chmod +x /tmp/chrome/chrome
 
-# Install ChromeDriver
-CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d'.' -f1)
-wget -O /tmp/chromedriver.zip "https://chromedriver.storage.googleapis.com/${CHROME_VERSION}.0/chromedriver_linux64.zip"
-unzip /tmp/chromedriver.zip -d /usr/local/bin/
-chmod +x /usr/local/bin/chromedriver
+# Download ChromeDriver matching version 123
+wget -O chromedriver.zip "https://chromedriver.storage.googleapis.com/123.0.6312.105/chromedriver_linux64.zip"
+unzip chromedriver.zip
+chmod +x chromedriver
+mv chromedriver /tmp/chrome/chromedriver
 
-# Start Flask app with Gunicorn
+# Install Python dependencies
+pip install --no-cache-dir gunicorn
+
+# Start Flask App
 gunicorn --bind 0.0.0.0:$PORT wsgi:app
